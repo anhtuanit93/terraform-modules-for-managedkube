@@ -71,16 +71,35 @@ data "template_file" "helm_values" {
   }
 }
 
-module "cluster-autoscaler" {
-  source = "github.com/ManagedKube/kubernetes-ops//terraform-modules/aws/helm/helm_generic?ref=v1.0.9"
+# module "cluster-autoscaler" {
+#   source = "github.com/ManagedKube/kubernetes-ops//terraform-modules/aws/helm/helm_generic?ref=v1.0.9"
 
-  repository          = "https://kubernetes.github.io/autoscaler"
-  official_chart_name = "cluster-autoscaler"
-  user_chart_name     = "cluster-autoscaler"
-  helm_version        = "9.24.0"
-  namespace           = "kube-system"
-  helm_values         = data.template_file.helm_values.rendered
+#   repository          = "https://kubernetes.github.io/autoscaler"
+#   official_chart_name = "cluster-autoscaler"
+#   user_chart_name     = "cluster-autoscaler"
+#   helm_version        = "9.24.0"
+#   namespace           = "kube-system"
+#   helm_values         = data.template_file.helm_values.rendered
 
+#   depends_on = [
+#     module.iam_assumable_role_admin
+#   ]
+# }
+
+resource "helm_release" "cluster_autoscaler" {
+  chart      = "cluster-autoscaler"
+  version    = var.chart_version
+  namespace  = var.namespace
+  name       = "cluster-autoscaler"
+  repository = "https://kubernetes.github.io/autoscaler"
+  values = [
+    templatefile("${path.module}/helm_values.yaml.tpl", {
+      awsAccountID       = data.aws_caller_identity.current.account_id
+      awsRegion          = var.aws_region
+      clusterName        = var.cluster_name
+      serviceAccountName = var.k8s_service_account_name
+    })
+  ]
   depends_on = [
     module.iam_assumable_role_admin
   ]
