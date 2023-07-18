@@ -34,3 +34,15 @@ variable "k8s_service_account_name" {
   default     = "cluster-autoscaler-aws-cluster-autoscaler"
   description = "Service account name"
 }
+
+variable "chart_version" {
+  type        = string
+  default     = "9.29.0"
+  description = "Cluster autoscaler helm chart version"
+}
+
+variable "namespace" {
+  type        = string
+  default     = "kube-system"
+  description = "Namespace to deploy chart"
+}
