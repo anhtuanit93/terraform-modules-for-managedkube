@@ -2,11 +2,11 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.37.0"
+      version = ">= 4.57"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.1.0"
+      version = ">= 2.10"
     }
   }
 }
@@ -49,7 +49,7 @@ https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-a
 resource "aws_eks_addon" "csi_driver" {
   cluster_name             = module.eks.cluster_id
   addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.11.4-eksbuild.1"
+  addon_version            = "v1.21-eksbuild.1"
   service_account_role_arn = aws_iam_role.eks_ebs_csi_driver.arn
 }
 
@@ -84,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "amazon_ebs_csi_driver" {
 
 module "eks" {
   source           = "terraform-aws-modules/eks/aws"
-  version          = "18.23.0"
+  version          = "19.15.4"
   cluster_name     = var.cluster_name
   cluster_version  = var.cluster_version
   enable_irsa      = var.enable_irsa
